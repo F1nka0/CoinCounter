@@ -1,0 +1,33 @@
+﻿<Window xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"  x:Class="ArduinoApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
+        xmlns:local="clr-namespace:ArduinoApp"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <Grid>
+        <StackPanel  Background="#FF767676"  HorizontalAlignment="Left" MinWidth="150">
+            <Expander Header="Доступные порты" Name="exp1">
+                <ListBox Name="ListOfPorts" ></ListBox>
+                
+            </Expander>
+            <Button x:Name="getData" Click="getData_Click">Загрузить данные</Button>
+            <TextBox Name="tbtest" Height="23" TextWrapping="Wrap" Text="TextBox" Width="120"/>
+        </StackPanel>
+        <lvc:CartesianChart x:Name="Graph" HorizontalAlignment="Right" MinWidth="637" Series="{Binding SeriesCollection}" LegendLocation="Right"  >
+            <lvc:CartesianChart.AxisY >
+                <lvc:Axis Title="Количеств монет каждого номинала" Labels="{Binding YFormatter}"></lvc:Axis>
+            </lvc:CartesianChart.AxisY>
+            <lvc:CartesianChart.AxisX>
+                <lvc:Axis Title="Время" Labels="{Binding Labels}"></lvc:Axis>
+            </lvc:CartesianChart.AxisX>
+        </lvc:CartesianChart>
+        <!--<lvc:CartesianChart x:Name="Graph" HorizontalAlignment="Right" MinWidth="500" >
+            <lvc:CartesianChart.AxisY >
+                <lvc:Axis IsEnabled="True" ShowLabels="True"></lvc:Axis>
+            </lvc:CartesianChart.AxisY>
+        </lvc:CartesianChart>-->
+    </Grid>
+</Window>
