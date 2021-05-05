@@ -17,11 +17,22 @@ using LiveCharts;
 using LiveCharts.Wpf;
 using System.Threading;
 using System.IO;
+using System.Diagnostics;
 namespace ArduinoApp
 {
     /// <summary>
     /// Логика взаимодействия для MainWindow.xaml
     /// </summary>
+
+    class DataForTask {
+
+        public DataForTask(SerialPort sp, CancellationToken ct) {
+            this.sp = sp;
+            this.ct = ct;
+        }
+        public SerialPort sp;
+        public CancellationToken ct;
+    }
     public partial class MainWindow : Window
     {
         public double[] YFormatter { get; set; }
@@ -32,14 +43,51 @@ namespace ArduinoApp
             InitializeComponent();
             ListOfPorts.ItemsSource = SerialPort.GetPortNames();
         }
+        private string GetCoinData(object data) {
+            CancellationToken ct = ((DataForTask)data).ct;
+            SerialPort sp = ((DataForTask)data).sp;
+            return sp.ReadLine();
+        }
+        private void Mems() { }
         private void getData_Click(object sender, RoutedEventArgs e)
         {
-            SerialPort serialPort = new SerialPort(ListOfPorts.SelectedItem.ToString(), 9600,Parity.None);
-            serialPort.Open();
+            SerialPort serialPort = new SerialPort();
+            try
+            {
+                serialPort = new SerialPort(ListOfPorts.SelectedItem.ToString(), 9600, Parity.None);
+                serialPort.Open();
+            }
+
+            catch (NullReferenceException NREexc)
+            {
+                tbtest.Text = "Считывание не удалось, выберите один из доступных портов";
+                return;
+            }
+            catch (Exception exc)
+            {
+
+                tbtest.Text = "Считывание не удалось, аппарат не подключён";
+                return;
+            }
             //tbtest.Text = ListOfPorts.SelectedItem.ToString();//тут выводится инфа об доступных портах в текстбокс
             serialPort.Write(new char[] { 's' },0,1);
             System.Threading.Thread.Sleep(100);
-            string CurrentCoinData = serialPort.ReadLine();
+            CancellationTokenSource ver = new CancellationTokenSource();
+            Task<string> GetStringFromSerial = new Task<string>(GetCoinData,new DataForTask(serialPort, ver.Token));
+            GetStringFromSerial.Start();
+
+            string CurrentCoinData;//serialPort.ReadLine();
+            
+            Thread.Sleep(1000);
+            if (!GetStringFromSerial.IsCompleted)
+            {
+                tbtest.Text = "Ошибка выполнения: невозможно подключиться к выбранному порту";
+                ver.Cancel();
+                return;
+            }
+            else {
+                CurrentCoinData = GetStringFromSerial.Result;
+            }
             System.Threading.Thread.Sleep(100);
             tbtest.Text = CurrentCoinData;
 
@@ -148,6 +196,12 @@ namespace ArduinoApp
             readernewnew.Close();
             //fs.Close();
             serialPort.Close();
+        }
+
+        private void UpdatePorts_Click(object sender, RoutedEventArgs e)
+        {
+
+            ListOfPorts.ItemsSource = SerialPort.GetPortNames();
         }
     }
 }
