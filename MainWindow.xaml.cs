@@ -36,8 +36,10 @@ namespace ArduinoApp
     public partial class MainWindow : Window
     {
         public double[] YFormatter { get; set; }
+
         public SeriesCollection SeriesCollection { get; set; }
         public string[] Labels { get; set; }
+        public bool Completed=true; 
         public MainWindow()
         {
             InitializeComponent();
@@ -46,7 +48,11 @@ namespace ArduinoApp
         private string GetCoinData(object data) {
             CancellationToken ct = ((DataForTask)data).ct;
             SerialPort sp = ((DataForTask)data).sp;
-            return sp.ReadLine();
+            try
+            {
+                return sp.ReadLine();
+            }
+            finally { }
         }
         private void Mems() { }
         private void getData_Click(object sender, RoutedEventArgs e)
@@ -61,12 +67,13 @@ namespace ArduinoApp
             catch (NullReferenceException NREexc)
             {
                 tbtest.Text = "Считывание не удалось, выберите один из доступных портов";
+                serialPort.Close();
                 return;
             }
             catch (Exception exc)
             {
-
                 tbtest.Text = "Считывание не удалось, аппарат не подключён";
+                serialPort.Close();
                 return;
             }
             //tbtest.Text = ListOfPorts.SelectedItem.ToString();//тут выводится инфа об доступных портах в текстбокс
@@ -83,6 +90,7 @@ namespace ArduinoApp
             {
                 tbtest.Text = "Ошибка выполнения: невозможно подключиться к выбранному порту";
                 ver.Cancel();
+                serialPort.Close();
                 return;
             }
             else {
@@ -93,7 +101,7 @@ namespace ArduinoApp
 
             string[] splittedCoinAmmountData;
             List<string> RowsToWrite = new List<string>();
-            using (FileStream fs = File.Open(@"C:\Users\xbox0\source\repos\ArduinoApp\dataStorage\data1.txt", FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite))
+            using (FileStream fs = File.Open(@"C:\Users\xbox0\Desktop\counter\CoinCounter\dataStorage\data1.txt", FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite))
             {
                 using (StreamReader reader = new StreamReader(fs))
                 {
@@ -118,8 +126,8 @@ namespace ArduinoApp
                 fs.Dispose();
                 fs.Close();
             }
-            File.WriteAllText(@"C:\Users\xbox0\source\repos\ArduinoApp\dataStorage\data1.txt", string.Empty);
-            FileStream fsnew = File.Open(@"C:\Users\xbox0\source\repos\ArduinoApp\dataStorage\data1.txt", FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
+            File.WriteAllText(@"C:\Users\xbox0\Desktop\counter\CoinCounter\dataStorage\data1.txt", string.Empty);
+            FileStream fsnew = File.Open(@"C:\Users\xbox0\Desktop\counter\CoinCounter\dataStorage\data1.txt", FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
             //fsnew.Flush();
             StreamWriter writer = new StreamWriter(fsnew);
             StreamReader readernew = new StreamReader(fsnew);
@@ -129,7 +137,7 @@ namespace ArduinoApp
             }
             //writer.WriteLine(new DateTime().Day+"."+ new DateTime().Month);//---
             writer.Close();
-            FileStream fsnewnew = File.Open(@"C:\Users\xbox0\source\repos\ArduinoApp\dataStorage\data1.txt", FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
+            FileStream fsnewnew = File.Open(@"C:\Users\xbox0\Desktop\counter\CoinCounter\dataStorage\data1.txt", FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
             byte colorValue = 50;
             StreamReader readernewnew = new StreamReader(fsnewnew);
             LineSeries ls;

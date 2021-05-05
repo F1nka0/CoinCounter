@@ -16,7 +16,7 @@
             <Button x:Name="getData" Click="getData_Click">Загрузить данные</Button>
             <Button x:Name="UpdatePorts" Click="UpdatePorts_Click">Обновить список доступных портов</Button>
             <TextBox Name="tbtest" Height="206" TextWrapping="Wrap" Text="TextBox" Width="120"/>
-            <TextBlock TextWrapping="Wrap" Text="Бета v1.01 build 3" RenderTransformOrigin="0.527,9.188" VerticalAlignment="Bottom" />
+            <TextBlock TextWrapping="Wrap" Text="Бета v1.01 build 4" RenderTransformOrigin="0.527,9.188" VerticalAlignment="Bottom" />
         </StackPanel>
         <lvc:CartesianChart x:Name="Graph" HorizontalAlignment="Right" MinWidth="637" Series="{Binding SeriesCollection}" LegendLocation="Right"  >
             <lvc:CartesianChart.AxisY >
